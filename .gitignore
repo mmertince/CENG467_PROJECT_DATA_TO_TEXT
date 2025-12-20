@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*.class
+.venv
+venv/
+env/
+
+# Data and Models (Proje dokümanındaki büyük dosyalar)
+data/
+models/
+*.json
+!Q1_outputs.json # Sadece istenen çıktı dosyasını hariç tutar
+
+# OS
+.DS_Store
+Thumbs.db
