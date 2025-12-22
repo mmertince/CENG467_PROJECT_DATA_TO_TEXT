@@ -1,0 +1,23 @@
+The model demonstrated strong performance in examples where the table structure was
+linear and the highlighted cells provided a clear descriptive path.
+
+    Example Index 0: 
+
+    * Candidate: "Daniel Henry Chamberlain was the governor of South Carolina from 
+    December 1, 1874, to December 14, 1876."
+
+    "target": "Daniel Henry Chamberlain was the 76th Governor of South Carolina from 1874."
+
+    Reason for Success: The model accurately extracted temporal data and matched it with the correct entity.
+     The syntax is fluent and professional, showing the model's ability to handle biographical data.
+
+
+    Example Index 250:
+
+        Candidate: "AFC 3 was held at Geelong Arena in Geelong, Australia on April 14, 2012."
+
+        Target: "AFC 3 was an event held on April 14, 2012, at Geelong Arena in Geelong, Australia."
+
+        Reason for Success: The model correctly identified the event name, the specific date, and the 
+        multi-level location (Arena, City, Country). The phrasing is natural and matches the target 
+        sentence , leading to a perfect BLEU/BLEURT contribution for this specific instance.

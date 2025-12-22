@@ -1,0 +1,41 @@
+1. Technical Differences
+
+The primary difference between BLEU and BLEURT lies in how they 
+measure the similarity between a candidate (model output) and 
+a reference (target).
+
+                Feature,BLEU (Bilingual Evaluation Understudy),                         BLEURT (BERT-based Evaluation)
+Methodology,    Lexical Overlap: Counts matching n-grams (sequences of 1-4 words).,     Semantic Embedding: Uses a pre-trained Transformer (BERT) to compare meaning.
+Logic,          Precision-oriented; requires exact word-for-word matches.,               Neural-based; recognizes synonyms and paraphrases.
+Flexibility,    Rigid; penalizes correct synonyms or varied word orders.,                  Flexible; rewards sentences that carry the same meaning.
+Judgment,       Often correlates poorly with human perception of quality.,              Specifically trained to correlate with human quality ratings.
+
+
+2. Which Score is Better for This Task?
+
+For the Table-to-Text task (ToTTo), BLEURT is the superior metric. 
+In data-to-text generation, the goal is to convert structured data into a natural-sounding sentence.
+There are dozens of linguistically "correct" ways to describe a single row of a table. For example:
+
+Target: "Daniel Henry Chamberlain was the 76th Governor of South Carolina from 1874."
+Model: "From 1874, Daniel Henry Chamberlain served as the governor for South Carolina."
+
+BLEU would assign a lower score here because the word order changed and "served as the" was added.
+BLEURT, however, recognizes that the factual integrity and meaning are identical,
+providing a much fairer assessment of the model's actual performance.
+
+
+3. Failure to Reflect QWEN Model Success
+
+Yes, BLEU is highly likely to fail to reflect the successful outputs of the QWEN model. 
+Large Language Models (LLMs) like Qwen-4B are trained on diverse web data, 
+making them highly fluent and prone to creative paraphrasing. 
+When Qwen generates a technically perfect and highly readable sentence that happens 
+to use different phrasing than the human-written target, 
+BLEU will "fail" by assigning it a low score.
+
+In our results, our BLEURT score (0.4922) is significantly higher than many supervised baselines 
+on the leaderboard (some around 0.35), even though our BLEU is lower. 
+This indicates that while Qwen doesn't "mimic" the reference's exact vocabulary, 
+it is highly successful at capturing the table's meaning, 
+a success that BLEU is mathematically unable to see.

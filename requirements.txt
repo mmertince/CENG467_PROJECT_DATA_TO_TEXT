@@ -1,4 +1,6 @@
-torch
+torch 
+accelerate
+bitsandbytes
 datasets==3.6.0
 transformers==4.57.0
 bleurt-pytorch

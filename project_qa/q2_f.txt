@@ -1,0 +1,22 @@
+To improve the performance of Qwen-4B, I suggest implementing two primary modifications: 
+Structural Verbalization and Chain-of-Thought (CoT) Prompting.
+
+    Structural Verbalization of Highlighted Cells:
+
+        Before providing the full Markdown table, I will add a section titled "Target Data Points" 
+        that explicitly lists the values found within the <highlight> tags.
+
+        Small-scale LLMs (4B parameters) can suffer from "attention drift" in long Markdown strings.
+        By pre-extracting the highlighted values into a simple list, 
+        we provide a "shortcut" for the model's attention mechanism, 
+        ensuring it doesn't overlook crucial data points or 
+        hallucinate adjacent non-highlighted cells 
+
+
+    Instructional Constraints (CoT):
+
+        I will add a command: "Use only the highlighted information to form
+        a single, grammatically correct sentence. Do not add outside knowledge."
+
+        This prevents "hallucination" by grounding the model strictly in the provided text.
+        Qwen has a tendency to fill in gaps with its own training data; explicit constraints help maintain high faithfulness.
