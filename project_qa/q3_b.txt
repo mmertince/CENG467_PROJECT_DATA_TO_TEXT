@@ -1,0 +1,20 @@
+Metric	        Q1 (Baseline)	Q2 (Custom Prompt)	Q3 (Row Tagging)
+BLEU Score	    31.24	        31.24	            31.24
+BLEURT Score	0.5467	        0.5337	            0.5341
+
+The BLEU score remained perfectly consistent at 31.24 across all versions. 
+This suggests that the model's core vocabulary and sentence templates for the 
+ToTTo dataset are highly stable. Even with structural markers, 
+the model continues to follow its decoded linguistic patterns.
+
+There was a slight increase in the BLEURT score 
+from 0.5337 in Q2 to 0.5341 in Q3. 
+While subtle, this indicates that the <important> tag provided a 
+better semantic grounding than my own prompting strategy but
+still baseline score beats row tagging strategy 
+which indicates that for Qwen-4B, simpler prompts are more effective. 
+The model likely benefits from concise instructions that do not
+overwhelm its attention mechanisms, especially given its 4B parameter size.
+
+Overall, the results reinforce that for medium-sized LLMs like Qwen-4B,
+keeping prompts straightforward and focused yields the best semantic performance.

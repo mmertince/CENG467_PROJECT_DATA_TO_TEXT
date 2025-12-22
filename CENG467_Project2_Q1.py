@@ -130,9 +130,9 @@ succeeded by H. Alexander Smith (R), from December 7, 1944.
 def generate_prompt(example):
 
     #extract auxiliary context
-    page_title = example.get('page_title', '') #returns empty string if key not found
-    section_title = example.get('section_title', '') #returns empty string if key not found
-    section_text = example.get('section_text', '') #returns empty string if key not found
+    page_title = example.get('table_page_title', '-') #returns empty string if key not found
+    section_title = example.get('table_section_title', '-') #returns empty string if key not found
+    section_text = example.get('table_section_text', '-') #returns empty string if key not found
 
     #format table with highlighted cells
     markdown_table = format_table_to_markdown(
@@ -206,8 +206,14 @@ print("Saving intermediate results before metrics...")
 with open("Q1_outputs_raw.json", "w", encoding="utf-8") as f:
     json.dump(results, f, ensure_ascii=False, indent=4)
 
+#free up model memory
+import gc
+del model 
+torch.cuda.empty_cache()
+gc.collect()
+    
 #calculate BLEU and BLEURT scores
-def calculate_metrics(results, model):
+def calculate_metrics(results):
     candidates = [res['candidate'] for res in results]
     targets = [[res['target']] for res in results]  #sacrebleu expects list of references for each candidate
 
@@ -215,12 +221,6 @@ def calculate_metrics(results, model):
     bleu = sacrebleu.corpus_bleu(candidates, targets)
     print(f"--- Evaluation Results ---")
     print(f"BLEU score: {bleu.score:.2f}")
-
-    #free up model memory
-    import gc
-    del model 
-    torch.cuda.empty_cache()
-    gc.collect()
 
     #BLEURT score calculation(requires pre-trained BLEURT model)
     #using recommended checkpoint: BLEURT-20
@@ -242,7 +242,7 @@ def calculate_metrics(results, model):
     return bleu.score, average_bleurt
 
 #calculate and print metrics
-bleu_score, bleurt_score = calculate_metrics(results, model)
+bleu_score, bleurt_score = calculate_metrics(results)
 
 print("Processing complete. Results saved to Q1_outputs.json.")
 #final dictionary including scores

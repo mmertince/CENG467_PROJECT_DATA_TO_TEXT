@@ -1,5 +1,5 @@
 few-shot prompted Qwen-4B model was evaluated on 300 examples from the ToTTo validation set. The results are as follows:
 
-    BLEU Score: 36.06
+    BLEU Score: 31.2393
 
-    BLEURT Score: 0.4922
+    BLEURT Score: 0.5467

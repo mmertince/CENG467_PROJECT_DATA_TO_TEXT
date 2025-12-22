@@ -1,0 +1,39 @@
+Metric	        Q1 (Baseline)	Q2.g (Custom Prompt)	Difference
+BLEU Score	    31.24	        31.24	                0.00
+BLEURT Score	0.5467	         0.5337	                -0.0130
+
+The fact that the BLEU score remained exactly the same suggests that 
+the n-gram overlap between the model's output and the target sentences 
+did not change significantly. This indicates that while the internal 
+reasoning of the model might have been altered by the custom prompt, 
+the final "lexical choices" (the specific words used) were constrained by 
+the model's decoding parameters or the simplicity of the tasks.
+
+Surprisingly, the BLEURT score dropped from 0.5467 to 0.5337.
+Since BLEURT is a neural metric that evaluates semantic meaning and 
+factual alignment, this slight decrease suggests that the custom prompt 
+(structural verbalization) actually made the model slightly less semantically 
+accurate compared to the simpler baseline prompt.
+
+The goal of the custom prompt was to improve performance through 
+Structural Verbalization (listing "Target Data Points" explicitly). 
+However, the results show a negative impact:
+
+    For the Qwen-4B model, adding a "Target Data Points" section 
+    before the actual table may have introduced extra tokens that 
+    acted as "noise." Instead of helping, this extra context might have 
+    caused the model to lose focus on the auxiliary context 
+    (Page Title/Section Title), leading to a slightly less coherent sentence.
+
+    Smaller LLMs (4B parameters) can be sensitive to prompt length. 
+    The baseline prompt in Q1 was direct and concise. 
+    By complicating the instructions in Q2, we likely triggered a 
+    "Lost-in-the-Middle" effect, where the model struggled to reconcile 
+    the explicit data points with the raw table structure.
+
+The baseline prompt proved to be more effective 
+for this specific model size. While structural verbalization 
+is often beneficial for larger models (e.g., 70B+), 
+for Qwen-4B, the simplest instruction provided the best semantic grounding. 
+This highlights the importance of conciseness in prompt engineering 
+for medium-scale language models.

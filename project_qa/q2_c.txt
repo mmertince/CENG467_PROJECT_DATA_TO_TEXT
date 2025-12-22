@@ -3,8 +3,7 @@ linear and the highlighted cells provided a clear descriptive path.
 
     Example Index 0: 
 
-    * Candidate: "Daniel Henry Chamberlain was the governor of South Carolina from 
-    December 1, 1874, to December 14, 1876."
+    * Candidate: "Daniel Henry Chamberlain served as Governor of South Carolina from December 1, 1874, to December 14, 1876."
 
     "target": "Daniel Henry Chamberlain was the 76th Governor of South Carolina from 1874."
 
@@ -14,7 +13,7 @@ linear and the highlighted cells provided a clear descriptive path.
 
     Example Index 250:
 
-        Candidate: "AFC 3 was held at Geelong Arena in Geelong, Australia on April 14, 2012."
+        Candidate: "AFC 3 was held on April 14, 2012, at Geelong Arena in Geelong, Australia."
 
         Target: "AFC 3 was an event held on April 14, 2012, at Geelong Arena in Geelong, Australia."
 

@@ -1,16 +1,16 @@
-    "While the BLEU score of 36.06 highlights the model's lexical precision, 
-    the BLEURT score of 0.4922 provides a deeper look into its semantic competence.
-     Unlike traditional metrics that rely on n-gram matching, BLEURT utilizes a pre-trained Transformer
-      to assess the logical consistency between the table data and the generated text.
-       Given that the model was never explicitly trained on the ToTTo dataset,
-        a BLEURT score near 0.5 suggests that the few-shot prompt effectively 'activated'
-         the model's latent ability to reason over tabular structures, rewarding its ability to
-          paraphrase human references without losing factual integrity."
+    "While the BLEU score of 31.2393 highlights the model's lexical precision, 
+    the BLEURT score of 0.5467 provides a deeper look into its semantic competence.
+    Unlike traditional metrics that rely on n-gram matching, BLEURT utilizes a pre-trained Transformer
+    to assess the logical consistency between the table data and the generated text.
+    Given that the model was never explicitly trained on the ToTTo dataset,
+    a BLEURT score 0.5467 suggests that the few-shot prompt effectively 'activated'
+    the model's latent ability to reason over tabular structures, rewarding its ability to
+    paraphrase human references without losing factual integrity."
 
           "When compared to the official ToTTo Leaderboard, our few-shot prompted Qwen-4B model
            performs a feasable performance profile. Lexically, it is behind of SOTA fine-tuned
-            models like T5 (36.06 vs 57.5 BLEU). However, semantically, our model achieves 
-            a BLEURT score of 0.4922, which exceeds many of the supervised baselines (e.g., Google’s T5 at 0.351).
+            models like T5 (31.2393 vs 57.5 BLEU). However, semantically, our model achieves 
+            a BLEURT score of 0.5467, which exceeds many of the supervised baselines (e.g., Google’s T5 at 0.351).
              This inconsistency suggests that while fine-tuned models are good at 'memorizing' exact word overlaps,
               modern LLMs like Qwen-4B produce more semantically coherent and contextually rich sentences.
                This confirms that for the Data-to-Text task, few-shot prompting 

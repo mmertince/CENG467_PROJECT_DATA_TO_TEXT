@@ -26,7 +26,7 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 
 #load dataset first 300 validation samples as homework requires             
-dataset = load_dataset("GEM/totto", split="validation[:20]")
+dataset = load_dataset("GEM/totto", split="validation[:300]")
 
 #function to format table to markdown with highlighted cells
 def format_table_to_markdown(table, highlighted_cells):
@@ -39,6 +39,8 @@ def format_table_to_markdown(table, highlighted_cells):
     #iterate through each row and column in the table
     for row_idx, row in enumerate(table):    
         formatted_row = []
+        highlighted_cell_values = []
+
         for col_idx, cell in enumerate(row):
             cell_value = str(cell['value'])
 
@@ -46,6 +48,8 @@ def format_table_to_markdown(table, highlighted_cells):
             is_highlighted = any(h[0] == row_idx and h[1] == col_idx for h in highlighted_cells)
 
             if is_highlighted:
+                #add to highlighted values list
+                highlighted_cell_values.append(cell_value)
                 #wrap highlighted cell with <highlight> tags
                 cell_value = f"<highlight>{cell_value}</highlight>"
                 formatted_row.append(cell_value)
@@ -55,7 +59,7 @@ def format_table_to_markdown(table, highlighted_cells):
         #join the formatted row with pipes for markdown table
         markdown_table.append("| " + " | ".join(formatted_row) + " |")
 
-    return "\n".join(markdown_table)    
+    return "\n".join(markdown_table), highlighted_cell_values    
 
 #define system prompt for the model based on hw requirements
 SYSTEM_PROMPT = """
@@ -65,20 +69,20 @@ Your task is to generate a fluent sentence that describes the highlighted inform
 1. Read the **Input Table** and the **Auxiliary Context** (Page Title, Section Title, Section Text).
 2. Focus **only** on the cells wrapped in `<highlight>` and `</highlight>` tags.
 3. Write a coherent, factual sentence that incorporates the information from these highlighted cells.
-4. You may use the Page Title or Section Title to provide necessary context (e.g., to identify the subject), but do not
-hallucinate details or include information from non-highlighted cells.
+4. You may use the Page Title or Section Title to provide necessary context (e.g., to identify the subject), but do not hallucinate details or include information from non-highlighted cells.
 5. ONLY give a single sentence answer after the prompt.
+
+---
 """
 
 #define few shot example for the model based on hw requirements
-FEW_SHOT_EXAMPLES = """ 
-### Example 1
+FEW_SHOT_EXAMPLES = """
 **Input Table:**
+Target Data Points: A Favorita is the telenovela aired in the 9 pm timeslot.
 | # | Run | Title | Chapters | Author | Director | Ibope Rating |
 | --- | --- | --- | --- | --- | --- | --- |
 | 59 | June 5, 2000— February 2, 2001 | Laços de Família | 209 | Manoel Carlos | Ricardo Waddington | 44.9 |
-| 60 | February 5, 2001— September 28, 2001 | Porto dos Milagres | 203 | Aguinaldo Silva Ricardo Linhares | Marcos Paulo Simões
-| 44.6 |
+| 60 | February 5, 2001— September 28, 2001 | Porto dos Milagres | 203 | Aguinaldo Silva Ricardo Linhares | Marcos Paulo Simões| 44.6 |
 | 61 | October 1, 2001— June 14, 2002 | O Clone | 221 | Glória Perez | Jayme Monjardim | 47.0 |
 | 62 | June 17, 2002— February 14, 2003 | Esperança | 209 | Benedito Ruy Barbosa | Luiz Fernando | 37.7 |
 | 63 | February 17, 2003— October 10, 2003 | Mulheres Apaixonadas | 203 | Manoel Carlos | Ricardo Waddington | 46.6 |
@@ -89,46 +93,42 @@ FEW_SHOT_EXAMPLES = """
 | 68 | July 10, 2006— March 2, 2007 | Páginas da Vida | 203 | Manoel Carlos | Jayme Monjardim | 46.8 |
 | 69 | March 5, 2007— September 28, 2007 | Paraíso Tropical | 179 | Gilberto Braga Ricardo Linhares | Dennis Carvalho | 42.8 |
 | 70 | October 1, 2007— May 31, 2008 | Duas Caras | 210 | Aguinaldo Silva | Wolf Maya | 41.1 |
-| 71 | June 2, 2008— January 16, 2009 | <highlight>A Favorita</highlight> | 197 | João Emanuel Carneiro | Ricardo Waddington |
-39.5 |
+| 71 | June 2, 2008— January 16, 2009 | <highlight>A Favorita</highlight> | 197 | João Emanuel Carneiro | Ricardo Waddington |39.5 |
 | 72 | January 19, 2009— September 11, 2009 | Caminho das Índias | 203 | Glória Perez | Marcos Schechtman | 38.8 |
 | 73 | September 14, 2009— May 14, 2010 | Viver a Vida | 209 | Manoel Carlos | Jayme Monjardim | 35.6 |
+
 **Auxiliary Context:**
 * Page Title: List of 8/9 PM telenovelas of Rede Globo
 * Section Title: 2000s
 * Section Text: –
+
 **Target Sentence:**
 A Favorita is the telenovela aired in the 9 pm timeslot.
 ---
-### Example 2
+
 **Input Table:**
+Target Data Points: William Warren Barbour (R), Died November 22, 1943. Successor was appointeduntil an election., Arthur Walsh (D), November 26, 1943, Arthur Walsh (D), Appointee was not a candidate to finish the term. Successor waselected., H. Alexander Smith (R), December 7, 1944
 | State (class) | Vacator | Reason for change | Successor | Date of successor's formal installation |
 | --- | --- | --- | --- | --- |
-| New Jersey (1) | <highlight>William Warren Barbour (R)</highlight> | <highlight>Died November 22, 1943. Successor was appointed
-until an election.</highlight> | <highlight>Arthur Walsh (D)</highlight> | <highlight>November 26, 1943</highlight> |
-| Indiana (3) | Frederick Van Nuys (D) | Died January 25, 1944. Successor was appointed until an election. | Samuel D. Jackson
-(D) | January 28, 1944 |
-| Massachusetts (2) | Henry Cabot Lodge, Jr. (R) | Resigned February 3, 1944, to go on active duty in the US Army. Success was
-appointed until a special election. | Sinclair Weeks (R) | February 8, 1944 |
-| Oregon (2) | Charles L. McNary (R) | Died February 25, 1944. Successor was appointed and subsequently won special election |
-Guy Cordon (R) | March 4, 1944 |
-| Washington (3) | Homer Bone (D) | Resigned November 13, 1944, to become Judge of the U.S. Court of Appeals for the 9th Circuit.
-| Warren Magnuson (D) | December 14, 1944 |
-| Indiana (3) | Samuel D. Jackson (D) | Appointee was not a candidate to finish the term. Successor was elected. | William E.
-Jenner (R) | November 7, 1944 |
+| New Jersey (1) | <highlight>William Warren Barbour (R)</highlight> | <highlight>Died November 22, 1943. Successor was appointeduntil an election.</highlight> | <highlight>Arthur Walsh (D)</highlight> | <highlight>November 26, 1943</highlight> |
+| Indiana (3) | Frederick Van Nuys (D) | Died January 25, 1944. Successor was appointed until an election. | Samuel D. Jackson(D) | January 28, 1944 |
+| Massachusetts (2) | Henry Cabot Lodge, Jr. (R) | Resigned February 3, 1944, to go on active duty in the US Army. Success wasappointed until a special election. | Sinclair Weeks (R) | February 8, 1944 |
+| Oregon (2) | Charles L. McNary (R) | Died February 25, 1944. Successor was appointed and subsequently won special election |Guy Cordon (R) | March 4, 1944 |
+| Washington (3) | Homer Bone (D) | Resigned November 13, 1944, to become Judge of the U.S. Court of Appeals for the 9th Circuit.| Warren Magnuson (D) | December 14, 1944 |
+| Indiana (3) | Samuel D. Jackson (D) | Appointee was not a candidate to finish the term. Successor was elected. | William E.Jenner (R) | November 7, 1944 |
 | South Carolina (3) | Ellison Durant Smith (D) | Died November 17, 1944. | Wilton E. Hall (D) | November 20, 1944 |
-| New Jersey (1) | <highlight>Arthur Walsh (D)</highlight> | Appointee was not a candidate to finish the term. Successor was
-elected. | <highlight>H. Alexander Smith (R)</highlight> | <highlight>December 7, 1944</highlight> |
-| Massachusetts (2) | Sinclair Weeks (R) | Appointee was not a candidate to finish the term. Successor was elected. | Leverett
-Saltonstall (R) | January 4, 1945 |
-4
+| New Jersey (1) | <highlight>Arthur Walsh (D)</highlight> | Appointee was not a candidate to finish the term. Successor waselected. | <highlight>H. Alexander Smith (R)</highlight> | <highlight>December 7, 1944</highlight> |
+| Massachusetts (2) | Sinclair Weeks (R) | Appointee was not a candidate to finish the term. Successor was elected. | LeverettSaltonstall (R) | January 4, 1945 |
+
 **Auxiliary Context:**
 * Page Title: 78th United States Congress
 * Section Title: Senate
 * Section Text: –
+
 **Target Sentence:**
 William Warren Barbour (R) served as Senate until November 22, 1943, then by Arthur Walsh (D) from November 26, 1943 and was
 succeeded by H. Alexander Smith (R), from December 7, 1944.
+
 ---
 """
 
@@ -137,9 +137,9 @@ def generate_prompt(example):
 
     #generate the full prompt for a given example from ToTTo dataset
     #extract auxiliary context
-    page_title = example.get('page_title', '')
-    section_title = example.get('section_title', '')
-    section_text = example.get('section_text', '')
+    page_title = example.get('table_page_title', '-') #returns empty string if key not found
+    section_title = example.get('table_section_title', '-') #returns empty string if key not found
+    section_text = example.get('table_section_text', '-') #returns empty string if key not found
 
     #format table with highlighted cells
     markdown_table, highlighted_values = format_table_to_markdown(
@@ -150,15 +150,15 @@ def generate_prompt(example):
 
     #construct the final prompt for current tast
     current_task = f"""
-### Current Task
-Target Data Points: {data_points_str}
 **Input Table:**
+Target Data Points: {data_points_str}
 {markdown_table}
 
 **Auxiliary Context:**
 * Page Title: {page_title}
 * Section Title: {section_title}
 * Section Text: {section_text}
+
 **Target Sentence:**
 """
     #combine system prompt, few shot example and current task
@@ -169,7 +169,7 @@ Target Data Points: {data_points_str}
 results = []
 
 #loop first 300 samples in the dataset
-limit = min(300, len(dataset))
+limit = len(dataset)
 
 for i in range(limit):
     example = dataset[i]
@@ -203,12 +203,24 @@ for i in range(limit):
     })
 
     #progress logging every example
-    print(f"Processed {i+1} examples.")
+    print(f"Processed {i+1} examples.")#bits and bytes config for 4bit quantization
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_use_double_quant=True,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_compute_dtype=torch.float16
+)
 
 print("Saving intermediate results before metrics...")
-with open("Q2_g_outputs_raw.json", "w", encoding="utf-8") as f:
+with open("Q2_outputs_g_raw.json", "w", encoding="utf-8") as f:
     json.dump(results, f, ensure_ascii=False, indent=4)
 
+#free up model memory
+import gc
+del model 
+torch.cuda.empty_cache()
+gc.collect()
+    
 #calculate BLEU and BLEURT scores
 def calculate_metrics(results):
     candidates = [res['candidate'] for res in results]
@@ -218,12 +230,6 @@ def calculate_metrics(results):
     bleu = sacrebleu.corpus_bleu(candidates, targets)
     print(f"--- Evaluation Results ---")
     print(f"BLEU score: {bleu.score:.2f}")
-
-    #free up model memory
-    import gc
-    del model 
-    torch.cuda.empty_cache()
-    gc.collect()
 
     #BLEURT score calculation(requires pre-trained BLEURT model)
     #using recommended checkpoint: BLEURT-20
@@ -247,7 +253,7 @@ def calculate_metrics(results):
 #calculate and print metrics
 bleu_score, bleurt_score = calculate_metrics(results)
 
-print("Processing complete. Results saved to Q2_g_outputs.json.")
+print("Processing complete. Results saved to Q2_outputs_g.json.")
 #final dictionary including scores
 final_output_data = {
     "metrics": {
@@ -257,7 +263,6 @@ final_output_data = {
     "results": results
 }
 
-#write to Q2_g_outputs
-#.json
-with open("Q2_g_outputs.json", "w", encoding="utf-8") as f:
+#write to Q2_outputs_g.json
+with open("Q2_outputs_g.json", "w", encoding="utf-8") as f:
     json.dump(final_output_data, f, ensure_ascii=False, indent=4)

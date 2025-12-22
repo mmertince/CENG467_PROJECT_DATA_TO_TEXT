@@ -34,8 +34,8 @@ When Qwen generates a technically perfect and highly readable sentence that happ
 to use different phrasing than the human-written target, 
 BLEU will "fail" by assigning it a low score.
 
-In our results, our BLEURT score (0.4922) is significantly higher than many supervised baselines 
-on the leaderboard (some around 0.35), even though our BLEU is lower. 
+In our results, our BLEURT score (0.5467) is significantly higher than many supervised baselines 
+on the leaderboard, even though our BLEU is lower. 
 This indicates that while Qwen doesn't "mimic" the reference's exact vocabulary, 
 it is highly successful at capturing the table's meaning, 
 a success that BLEU is mathematically unable to see.

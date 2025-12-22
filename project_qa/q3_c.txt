@@ -1,0 +1,15 @@
+ "example_index": 32,
+            "candidate": "Nadia Ejjafini won a silver medal in the 5000m at 
+            the 2012 European Championships in Helsinki, Finland.",
+
+            "target": "Nadia Ejjafini represented Italy for the first time at 
+            the 2011 World Cross Country Championships, coming 34th overall."
+
+the model exhibits a severe factual hallucination by claiming the athlete won 
+a 'silver medal' when the target data states she finished '34th overall'. 
+This failure is likely triggered by the increased context length introduced 
+in this version. Important flag we added to the rows and changed instructions 
+may be acting as  distractors or spurious correlations that mislead the model. 
+The model seems to default to its prior knowledge about athletic achievements, 
+especially in a sports context, rather than grounding itself in the provided 
+table data.

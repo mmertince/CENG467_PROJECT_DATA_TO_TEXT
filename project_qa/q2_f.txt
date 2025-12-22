@@ -19,4 +19,5 @@ Structural Verbalization and Chain-of-Thought (CoT) Prompting.
         a single, grammatically correct sentence. Do not add outside knowledge."
 
         This prevents "hallucination" by grounding the model strictly in the provided text.
-        Qwen has a tendency to fill in gaps with its own training data; explicit constraints help maintain high faithfulness.
+By implementing these changes, I expect the Qwen-4B model to better focus on the relevant table data,
+reduce hallucinations, and produce more accurate and contextually appropriate sentences.

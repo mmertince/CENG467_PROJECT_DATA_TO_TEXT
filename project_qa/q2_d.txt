@@ -1,26 +1,24 @@
-. Hallucination: Example Index 8
+Example Index 1
 
-    Candidate: "...Ambassador... of the United States 
-    to the Republic of Guinea."
+    Candidate: "Alma Jodorowsky played the role of Evelyn in the 2016 film Kids in Love, 
+    which was produced by Ealing Studios."
 
-    Target: "...United States Ambassador to Trinidad and Tobago."
+    Target: "Alma Jodorowsky had the role of Evelyn in the 2016 film Kids in Love."
 
-    Reason for Failure: This is a classic hallucination situation.
-    The model swapped the correct country (Trinidad and Tobago) with 
-    "Republic of Guinea." The reason behind this is that
-    LLMs have a "prior" knowledge bias where they confuse
-    similar entities in their internal weights, 
-    overriding the provided table data.
+    Reason for Failure:The model correctly identifies the core entities but 
+    "hallucinates" the production company (Ealing Studios). 
+    This indicates that the model is relying on its internal pre-trained weights rather 
+    than strictly grounding its output in the provided table data.
 
-2. Semantic Misalignment: Example Index 2
 
-    Candidate: "The total number of passing yards for the team is 947."
+Example Index 294
 
-    Target: "In his rookie season, Hawk led with 119 total tackles."
+    Candidate: "Żaneta Glanc from Poland achieved the highest score in the 
+    final with a total of 63.91 points" 
 
-    Reason for Failure: The model might have focused on the wrong column.
-    While 947 might be a number in the table, 
-    it was not the data the target sentence was interested in
-    which is Total Tackles. This shows a failure in attention—the model 
-    saw the numbers in the table but failed to map them 
-    to the correct semantic labels.
+    Target: "Żaneta Glanc of Poland made an opening throw of 63.91."
+
+    Reason for Failure: While the numerical value is correct, the model describes 
+    it as "points" instead of a "throw distance". 
+    This is a grounding error where the model fails to 
+    interpret the column header or the specific nature of the sport.
